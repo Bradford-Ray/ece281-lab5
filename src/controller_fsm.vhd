@@ -39,7 +39,38 @@ end controller_fsm;
 
 architecture FSM of controller_fsm is
 
+    --Define State Types--
+    type sm_state is (reset, loadA, loadB, displayResult);	
+    
+	signal current_state, next_state: sm_state;
+
 begin
 
+    --Next State Logic--
+    next_state <= current_state     when i_adv = '0'                                    else
+                  reset             when i_adv = '1' AND current_state = displayResult  else
+                  loadA             when i_adv = '1' AND current_state = reset          else
+                  loadB             when i_adv = '1' AND current_state = loadA          else
+                  displayResult     when i_adv = '1' AND current_state = loadB          else
+                  reset; 
+    
+    --Output Logic--
+    with current_state select
+    o_cycle <= "0001" when reset,
+               "0010" when loadA,
+               "0100" when loadB,
+               "1000" when displayResult,
+               "0000" when others;        
 
+-- State register ------------
+    --asynchronous reset b/c I would have to add a clock signal to make it synchronous
+	state_register : process(i_adv, i_reset)
+	begin
+        if i_reset = '1' then
+            current_state <= reset;
+        elsif (rising_edge(i_adv)) then
+            current_state <= next_state;
+        end if;
+	end process state_register;
+	
 end FSM;
