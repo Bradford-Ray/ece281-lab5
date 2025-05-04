@@ -47,11 +47,10 @@ architecture FSM of controller_fsm is
 begin
 
     --Next State Logic--
-    next_state <= current_state     when i_adv = '0'                                    else
-                  reset             when i_adv = '1' AND current_state = displayResult  else
-                  loadA             when i_adv = '1' AND current_state = reset          else
-                  loadB             when i_adv = '1' AND current_state = loadA          else
-                  displayResult     when i_adv = '1' AND current_state = loadB          else
+    next_state <= reset             when current_state = displayResult  else
+                  loadA             when current_state = reset          else
+                  loadB             when current_state = loadA          else
+                  displayResult     when current_state = loadB          else
                   reset; 
     
     --Output Logic--
@@ -68,7 +67,7 @@ begin
 	begin
         if i_reset = '1' then
             current_state <= reset;
-        elsif (rising_edge(i_adv)) then
+        elsif rising_edge(i_adv) then
             current_state <= next_state;
         end if;
 	end process state_register;

@@ -171,8 +171,8 @@ begin
 	an <= "1111"   when "0001",
 	      w_sel    when others;
 	      
-	seg <= "1111111"   when (w_flags(3) = '0' and w_sel(3) = '0') else
-	       "0111111"   when (w_flags(3) = '1' and w_sel(3) = '0') else
+	seg <= "1111111"   when (w_disp(7) = '0' and w_sel(3) = '0') else
+	       "0111111"   when (w_disp(7) = '1' and w_sel(3) = '0') else
 	       w_seg;  
 	             
 	led(15 downto 12) <= w_flags(3 downto 0);
@@ -181,7 +181,7 @@ begin
 	w_reset <= btnU;
 	
 	--Register A with reset on w_cycle(1)--
-	registerA_proc : process(w_cycle(1))
+	registerA_proc : process(w_cycle)
 	begin
 	   if rising_edge(w_cycle(1)) then
 	       f_A <= sw;
@@ -189,7 +189,7 @@ begin
     end process registerA_proc;
     
 	--Register B with reset on w_cycle(2)--
-	registerB_proc : process(w_cycle(2))
+	registerB_proc : process(w_cycle)
 	begin
 	   if rising_edge(w_cycle(2)) then
 	       f_B <= sw;
